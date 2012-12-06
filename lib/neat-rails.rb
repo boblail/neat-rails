@@ -1,7 +1,7 @@
-require "neat-rails/version"
+require "neat/rails/version"
+require "neat/rails/engine"
 
 module Neat
   module Rails
-    # Your code goes here...
   end
 end
