@@ -39,6 +39,7 @@ class window.Neat.ModelEditor extends Backbone.View
   
   cancelEdit: (e)->
     e?.preventDefault()
+    e?.stopImmediatePropagation()
     if @inEdit()
       $(@el).removeClass('editor').addClass('editable')
       @render()
