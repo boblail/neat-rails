@@ -77,7 +77,7 @@ class window.Neat.ModelEditor extends Backbone.View
   
   delete: (e)->
     e?.preventDefault()
-    if confirmDelete(@resource)
+    if @confirmDelete(@resource)
       $(@el).removeClass('editable').addClass('deleted')
       
       # !todo: upgrade backbone, use {wait: true}
