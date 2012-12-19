@@ -25,7 +25,7 @@ class window.Neat.ModelEditor extends Backbone.View
     # Begin editing when this resource is clicked
     # unless the user clicked a link or button.
     $(@el).click (e)=>
-      @edit() if @canEdit() and !$(e.target).isIn('input, button, a')
+      @edit() if @canEdit() and !$(e.target).isIn('input, button, a, label')
   
   render: ->
     json = _.extend(@model.toJSON(), {options: @templateOptions})
