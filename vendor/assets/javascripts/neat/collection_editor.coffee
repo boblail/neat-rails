@@ -19,6 +19,7 @@ class window.Neat.CollectionEditor extends Backbone.View
   sortOrder: 'asc'
   sortAliases: {}
   templateOptions: {}
+  pageSize: 30
   
   keyDownHandlers:
     ESC:    -> @viewInEdit?.cancelEdit()
@@ -38,7 +39,7 @@ class window.Neat.CollectionEditor extends Backbone.View
     @template = @template ? Neat.template["#{@viewPath}/index"]
     
     @paginator = new window.Lail.PaginatedList [],
-      page_size: if window.Neat.forPrint then Infinity else 30
+      page_size: if window.Neat.forPrint then Infinity else @pageSize
       always_show: false
     @paginator.onPageChange _.bind(@renderPage, @)
     
