@@ -65,8 +65,8 @@ class window.Neat.ModelEditor extends Backbone.View
     if attributes
       previousAttributes = @model.toJSON()
       
-      # !todo: might be a good idea to upgrade Backbone and use {wait: true} here
       @model.save attributes,
+        wait: true
         success: =>
           for attribute, newValue of attributes
             @debug "  . #{attribute} changed from ", previousAttributes[attribute], " to ", @model.get(attribute)
@@ -80,8 +80,8 @@ class window.Neat.ModelEditor extends Backbone.View
     if @confirmDelete(@resource)
       $(@el).removeClass('editable').addClass('deleted')
       
-      # !todo: upgrade backbone, use {wait: true}
       @model.destroy
+        wait: true
         success: =>
           @model.collection.remove(@model) if @model.collection
           @onDeleteSuccess
