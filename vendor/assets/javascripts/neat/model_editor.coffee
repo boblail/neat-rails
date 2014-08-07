@@ -1,6 +1,6 @@
 class window.Neat.ModelEditor extends Backbone.View
   tagName: 'li'
-  className: 'row interactive editable'
+  className: 'neat-row neat-interactive neat-editable'
   
   initialize: (options)->
     options = options ? {}
@@ -34,14 +34,14 @@ class window.Neat.ModelEditor extends Backbone.View
     @
   
   inEdit: -> $(@el).hasClass('editor')
-  canEdit: -> $(@el).hasClass('editable') and !@inEdit()
+  canEdit: -> $(@el).hasClass('neat-editable') and !@inEdit()
   template: -> if @inEdit() then @editTemplate else @showTemplate
   
   cancelEdit: (e)->
     e?.preventDefault()
     e?.stopImmediatePropagation()
     if @inEdit()
-      $(@el).removeClass('editor').addClass('editable')
+      $(@el).removeClass('editor').addClass('neat-editable')
       @render()
       @trigger('edit:end')
     @
@@ -49,7 +49,7 @@ class window.Neat.ModelEditor extends Backbone.View
   edit: ->
     unless @inEdit()
       $el = $(@el)
-      $el.addClass('editor').removeClass('editable hovered')
+      $el.addClass('editor').removeClass('neat-editable hovered')
       @trigger('edit:begin')
       @render()
       $el.find(':input:visible').first().focus()
@@ -78,7 +78,7 @@ class window.Neat.ModelEditor extends Backbone.View
   delete: (e)->
     e?.preventDefault()
     if @confirmDelete(@resource)
-      $(@el).removeClass('editable').addClass('deleted')
+      $(@el).removeClass('neat-editable').addClass('deleted')
       
       @model.destroy
         wait: true

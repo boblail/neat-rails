@@ -94,7 +94,7 @@ class window.Neat.CollectionEditor extends Backbone.View
   render: ->
     $el = $(@el)
     $el.html @template(collection: @collection)
-    $el.cssHover '.row.interactive'
+    $el.cssHover '.neat-row.neat-interactive'
     
     @afterRender()
     
