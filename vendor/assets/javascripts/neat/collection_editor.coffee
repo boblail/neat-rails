@@ -67,7 +67,8 @@ class window.Neat.CollectionEditor extends Backbone.View
     # has settled into new state.
     #
     @delayedRerender = new Lail.DelayedAction(_.bind(@rerenderPage, @), delay: 500)
-    @collection.bind 'change', @delayedRerender.trigger
+    @collection.bind 'change', =>
+      @delayedRerender.trigger() if @sortedBy
     
     # If the view's headers are 'a' tags, this view will try
     # to sort the collection using the header tags.

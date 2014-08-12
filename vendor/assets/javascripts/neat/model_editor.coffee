@@ -9,6 +9,8 @@ class window.Neat.ModelEditor extends Backbone.View
     @resource = @resource ? window.inflect.singularize(options.resource)
     $(@el).addClass(@resource)
     
+    @model.bind 'change', @render, @
+    
     # Renders the 'show' template normally,
     # renders 'edit' when in edit mode.
     @showTemplate = Neat.template["#{@viewPath}/show"]
@@ -58,9 +60,11 @@ class window.Neat.ModelEditor extends Backbone.View
   save: (e)->
     e?.preventDefault()
     $form = $(@el).closest('form')
-    newAttributes = $form.serializeObject()
+    newAttributes = @attributesFromForm($form)
     @debug 'saving: ', newAttributes
     attributes =  @model.changedAttributes(newAttributes)
+    
+    return unless @okToSave(attributes)
     
     if attributes
       previousAttributes = @model.toJSON()
@@ -74,6 +78,12 @@ class window.Neat.ModelEditor extends Backbone.View
         error: _.bind(@onSaveError, @)
     
     @cancelEdit()
+  
+  okToSave: (attributes)->
+    true
+  
+  attributesFromForm: ($form)->
+    $form.serializeObject()
   
   delete: (e)->
     e?.preventDefault()
