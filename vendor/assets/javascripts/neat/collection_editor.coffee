@@ -20,12 +20,11 @@ class window.Neat.CollectionEditor extends Backbone.View
   sortAliases: {}
   templateOptions: {}
   pageSize: 30
+  useKeyboardToChangeRows: true
   
   keyDownHandlers:
     ESC:    -> @viewInEdit?.cancelEdit()
     RETURN: -> @viewInEdit?.save()
-    UP:     -> @edit @prevView()
-    DOWN:   -> @edit @nextView()
   
   initialize: ->
     @viewPath = @viewPath ? @resource
@@ -74,6 +73,10 @@ class window.Neat.CollectionEditor extends Backbone.View
     # to sort the collection using the header tags.
     $(@el).delegate '.header a', 'click', _.bind(@sort, @)
     $(@el).delegate '.editor', 'keydown', _.bind(@onKeyDown, @)
+    
+    if @useKeyboardToChangeRows
+      @keyDownHandlers['UP']   = -> @edit @prevView()
+      @keyDownHandlers['DOWN'] = -> @edit @nextView()
     
     @views = []
     @viewInEdit = null
