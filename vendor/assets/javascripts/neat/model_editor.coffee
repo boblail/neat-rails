@@ -115,9 +115,7 @@ class window.Neat.ModelEditor extends Backbone.View
       
       @model.destroy
         wait: true
-        success: =>
-          @model.collection.remove(@model) if @model.collection
-          @onDeleteSuccess
+        success: => @onDeleteSuccess
         error: _.bind(@onSaveError, @)
       @cancelEdit()
   
