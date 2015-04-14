@@ -42,9 +42,9 @@ class window.Neat.CollectionEditor extends Backbone.View
       always_show: false
     @paginator.onPageChange _.bind(@renderPage, @)
     
-    @collection.bind 'reset',  @render, @
-    @collection.bind 'add',    @rerenderPage, @
-    @collection.bind 'remove', @rerenderPage, @
+    @collection.bind 'reset',   @__reset, @
+    @collection.bind 'add',     @__add, @
+    @collection.bind 'remove',  @__remove, @
     
     # We need to rerender the page if a model's attributes
     # have changed just in case this would affect how the
@@ -212,6 +212,17 @@ class window.Neat.CollectionEditor extends Backbone.View
   
   cancelEdit: ->
     @viewInEdit?.cancelEdit()
+  
+  
+  
+  __reset: ->
+    @render()
+  
+  __add: ->
+    @rerenderPage()
+  
+  __remove: ->
+    @rerenderPage()
   
   
   
