@@ -21,10 +21,9 @@ class window.Neat.CollectionEditor extends Backbone.View
   templateOptions: {}
   pageSize: 30
   useKeyboardToChangeRows: true
-  
-  keyDownHandlers:
-    ESC:    -> @viewInEdit?.cancelEdit()
-    RETURN: -> @viewInEdit?.save()
+  cancelOnEsc: true
+  saveOnEnter: true
+  keyDownHandlers: {}
   
   initialize: ->
     @viewPath = @viewPath ? @resource
@@ -74,9 +73,15 @@ class window.Neat.CollectionEditor extends Backbone.View
     $(@el).delegate '.header a', 'click', _.bind(@sort, @)
     $(@el).delegate '.editor', 'keydown', _.bind(@onKeyDown, @)
     
+    if @cancelOnEsc
+      @keyDownHandlers['ESC']    = -> @viewInEdit?.cancelEdit()
+    
+    if @saveOnEnter
+      @keyDownHandlers['RETURN'] = -> @viewInEdit?.save()
+    
     if @useKeyboardToChangeRows
-      @keyDownHandlers['UP']   = -> @edit @prevView()
-      @keyDownHandlers['DOWN'] = -> @edit @nextView()
+      @keyDownHandlers['UP']     = -> @edit @prevView()
+      @keyDownHandlers['DOWN']   = -> @edit @nextView()
     
     @views = []
     @viewInEdit = null
