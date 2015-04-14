@@ -97,7 +97,7 @@ class window.Neat.CollectionEditor extends Backbone.View
   
   render: ->
     $el = $(@el)
-    $el.html @template(collection: @collection)
+    $el.html @template(@context())
     $el.cssHover '.neat-row.neat-interactive'
     
     @afterRender()
@@ -107,6 +107,9 @@ class window.Neat.CollectionEditor extends Backbone.View
     @paginator.renderPaginationIn($el.find('.pagination'))
     @repaginate()
     @
+  
+  context: ->
+    collection: @collection
   
   afterRender: ->
     @
