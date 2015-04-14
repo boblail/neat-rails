@@ -110,7 +110,7 @@ class window.Neat.ModelEditor extends Backbone.View
   
   delete: (e)->
     e?.preventDefault()
-    if @confirmDelete(@resource)
+    @confirmDelete @resource, =>
       $(@el).removeClass('neat-editable').addClass('deleted')
       
       @model.destroy
@@ -119,8 +119,9 @@ class window.Neat.ModelEditor extends Backbone.View
         error: _.bind(@onSaveError, @)
       @cancelEdit()
   
-  confirmDelete: (resource)->
-    confirm("Delete this #{resource}?")
+  confirmDelete: (resource, callback)->
+    if confirm("Delete this #{resource}?")
+      callback()
   
   
   
