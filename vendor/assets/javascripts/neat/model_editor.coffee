@@ -33,6 +33,11 @@ class window.Neat.ModelEditor extends Backbone.View
     json = _.extend(@model.toJSON(), {options: @templateOptions})
     $(@el).html @template()(json)
     $(@el).attr('id', "#{@resource}_#{@model.get('id')}") # e.g. "calendar_5"
+    
+    @afterRender()
+    @
+  
+  afterRender: ->
     @
   
   inEdit: -> $(@el).hasClass('editor')
