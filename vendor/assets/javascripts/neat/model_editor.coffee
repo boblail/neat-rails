@@ -64,8 +64,7 @@ class window.Neat.ModelEditor extends Backbone.View
   
   save: (e)->
     e?.preventDefault()
-    $form = $(@el).closest('form')
-    newAttributes = @attributesFromForm($form)
+    newAttributes = @attributesFromForm(@$el)
     @debug 'saving: ', newAttributes
     attributes =  @model.changedAttributes(newAttributes)
     
@@ -87,8 +86,27 @@ class window.Neat.ModelEditor extends Backbone.View
   okToSave: (attributes)->
     true
   
-  attributesFromForm: ($form)->
-    $form.serializeObject()
+  attributesFromForm: ($el)->
+    attrs = {}
+    $el.find('input, select, textarea').each ->
+      elem = $(this)
+      name = elem.attr('name')
+      if name
+        elemType = elem.attr('type')
+        value = elem.val()
+
+        if name.substr(-2) == '[]'
+          name = name.substring(0, name.length - 2)
+          attrs[name] = attrs[name] || []
+          attrs[name].push elem.val()
+
+        else if elemType == 'checkbox' || elemType == 'radio'
+          attrs[name] = '' if typeof(attrs[name]) == 'undefined'
+          attrs[name] = value if elem.prop('checked')
+
+        else
+          attrs[name] = value
+    attrs
   
   delete: (e)->
     e?.preventDefault()
