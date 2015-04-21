@@ -7,7 +7,7 @@ class window.Neat.ModelEditor extends Backbone.View
     @templateOptions = options.templateOptions ? {}
     @viewPath = @viewPath ? options.viewPath
     @resource = @resource ? window.inflect.singularize(options.resource)
-    $(@el).addClass(@resource)
+    @$el.addClass(@resource)
     
     @model.bind 'change', @render, @
     
@@ -20,19 +20,19 @@ class window.Neat.ModelEditor extends Backbone.View
     # Don't use Backbone's events hash because if subclasses
     # use that more familiar syntax, they'll blow away events
     # defined in this class.
-    $(@el).delegate('.save-button',   'click', _.bind(@save, @))
-    $(@el).delegate('.delete-button', 'click', _.bind(@delete, @))
-    $(@el).delegate('.cancel-button', 'click', _.bind(@cancelEdit, @))
+    @$el.delegate('.save-button',   'click', _.bind(@save, @))
+    @$el.delegate('.delete-button', 'click', _.bind(@delete, @))
+    @$el.delegate('.cancel-button', 'click', _.bind(@cancelEdit, @))
     
     # Begin editing when this resource is clicked
     # unless the user clicked a link or button.
-    $(@el).click (e)=>
+    @$el.click (e)=>
       @edit() if @canEdit() and !$(e.target).isIn('input, button, a, label')
   
   render: ->
     json = _.extend(@model.toJSON(), {options: @templateOptions})
-    $(@el).html @template()(json)
-    $(@el).attr('id', "#{@resource}_#{@model.get('id')}") # e.g. "calendar_5"
+    @$el.html @template()(json)
+    @$el.attr('id', "#{@resource}_#{@model.get('id')}") # e.g. "calendar_5"
     
     @afterRender()
     @
@@ -40,27 +40,29 @@ class window.Neat.ModelEditor extends Backbone.View
   afterRender: ->
     @
   
-  inEdit: -> $(@el).hasClass('editor')
-  canEdit: -> $(@el).hasClass('neat-editable') and !@inEdit()
+  inEdit: -> @$el.hasClass('editor')
+  canEdit: -> @$el.hasClass('neat-editable') and !@inEdit()
   template: -> if @inEdit() then @editTemplate else @showTemplate
   
   cancelEdit: (e)->
     e?.preventDefault()
     e?.stopImmediatePropagation()
     if @inEdit()
-      $(@el).removeClass('editor').addClass('neat-editable')
+      @$el.removeClass('editor').addClass('neat-editable')
       @render()
       @trigger('edit:end')
     @
   
   edit: ->
     unless @inEdit()
-      $el = $(@el)
-      $el.addClass('editor').removeClass('neat-editable hovered')
+      @$el.addClass('editor').removeClass('neat-editable hovered')
       @trigger('edit:begin')
       @render()
-      $el.find(':input:visible').first().focus()
+      @autofocus()
     @
+  
+  autofocus: ->
+    @$el.find(':input:visible').first().focus()
   
   save: (e)->
     e?.preventDefault()
@@ -111,7 +113,7 @@ class window.Neat.ModelEditor extends Backbone.View
   delete: (e)->
     e?.preventDefault()
     @confirmDelete @resource, =>
-      $(@el).removeClass('neat-editable').addClass('deleted')
+      @$el.removeClass('neat-editable').addClass('deleted')
       
       @model.destroy
         wait: true
