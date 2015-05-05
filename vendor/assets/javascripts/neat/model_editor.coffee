@@ -48,6 +48,7 @@ class window.Neat.ModelEditor extends Backbone.View
     e?.preventDefault()
     e?.stopImmediatePropagation()
     if @inEdit()
+      @$el.find(':focus').blur()
       @$el.removeClass('editor').addClass('neat-editable')
       @render()
       @trigger('edit:end')
