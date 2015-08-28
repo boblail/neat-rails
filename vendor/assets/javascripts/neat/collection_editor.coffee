@@ -23,9 +23,10 @@ class window.Neat.CollectionEditor extends Backbone.View
   useKeyboardToChangeRows: true
   cancelOnEsc: true
   saveOnEnter: true
-  keyDownHandlers: {}
   
   initialize: ->
+    @keyDownHandlers = {}
+    
     @viewPath = @viewPath ? @resource
     @singular = inflect.singularize(@resource) # e.g. "calendar"
     @modelView = @modelView ? (()=>
