@@ -38,5 +38,5 @@ var Observer = (function(){
       });
     }
   };
-  return constructor;    
+  return constructor;
 })();

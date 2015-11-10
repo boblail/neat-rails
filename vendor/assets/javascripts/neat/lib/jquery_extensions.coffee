@@ -9,7 +9,7 @@ $.fn.extend
         if e.type == 'mouseenter'
           $(@).addClass('hovered')
         else
-          $(@).removeClass('hovered')    
-  
+          $(@).removeClass('hovered')
+
   isIn: (selector)->
     @is(selector) or (@parents(selector).length > 0)
