@@ -129,7 +129,7 @@ class window.Neat.CollectionEditor extends Backbone.View
     $(@el).find('.extended-pagination').html(@paginator.renderExtendedPagination())
 
     for model in @paginator.getCurrentSet()
-      view = new @modelView # e.g. window.CalendarView
+      view = @constructModelView # e.g. window.CalendarView
         resource: @resource
         viewPath: @viewPath
         model: model
@@ -144,6 +144,8 @@ class window.Neat.CollectionEditor extends Backbone.View
       $ul.append $el
     @
 
+  constructModelView: (options) ->
+    new @modelView options
 
 
   beforeEdit: (view)->
