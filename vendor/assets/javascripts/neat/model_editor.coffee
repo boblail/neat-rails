@@ -47,6 +47,11 @@ class window.Neat.ModelEditor extends Backbone.View
   cancelEdit: (e)->
     e?.preventDefault()
     e?.stopImmediatePropagation()
+    @endEdit()
+
+  endEdit: (e)->
+    e?.preventDefault()
+    e?.stopImmediatePropagation()
     if @inEdit()
       @$el.find(':focus').blur()
       @$el.removeClass('editor').addClass('neat-editable')
@@ -84,7 +89,7 @@ class window.Neat.ModelEditor extends Backbone.View
           @onSaveSuccess()
         error: _.bind(@onSaveError, @)
 
-    @cancelEdit()
+    @endEdit()
 
   okToSave: (attributes)->
     true
@@ -120,7 +125,7 @@ class window.Neat.ModelEditor extends Backbone.View
         wait: true
         success: => @onDestroySuccess
         error: _.bind(@onSaveError, @)
-      @cancelEdit()
+      @endEdit()
 
   confirmDestroy: (resource, callback)->
     if confirm("Delete this #{resource}?")
