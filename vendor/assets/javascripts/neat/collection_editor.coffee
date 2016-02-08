@@ -15,7 +15,6 @@ KEYS = {
 #   viewPath - by default this is set to resource
 #
 class window.Neat.CollectionEditor extends Backbone.View
-  sortedBy: 'name'
   sortOrder: 'asc'
   sortAliases: {}
   templateOptions: {}
@@ -93,11 +92,14 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   rerenderPage: (page)->
     page = @paginator.getCurrentPage() unless _.isNumber(page)
-    sortField = @sortField(@sortedBy)
-    items = @collection.sortBy (model)->
-      val = model.get(sortField) || ''
-      if _.isString(val) then val.toLowerCase() else val
-    items.reverse() if @sortOrder == 'desc'
+    if @sortedBy
+      sortField = @sortField(@sortedBy)
+      items = @collection.sortBy (model)->
+        val = model.get(sortField) || ''
+        if _.isString(val) then val.toLowerCase() else val
+      items.reverse() if @sortOrder == 'desc'
+    else
+      items = @collection.toArray()
     @paginator.init items, page
 
 
