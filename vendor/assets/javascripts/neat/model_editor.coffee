@@ -21,7 +21,7 @@ class window.Neat.ModelEditor extends Backbone.View
     # use that more familiar syntax, they'll blow away events
     # defined in this class.
     @$el.delegate('.save-button',   'click', _.bind(@save, @))
-    @$el.delegate('.delete-button', 'click', _.bind(@delete, @))
+    @$el.delegate('.delete-button', 'click', _.bind(@destroy, @))
     @$el.delegate('.cancel-button', 'click', _.bind(@cancelEdit, @))
 
     # Begin editing when this resource is clicked
@@ -111,18 +111,18 @@ class window.Neat.ModelEditor extends Backbone.View
           attrs[name] = value
     attrs
 
-  delete: (e)->
+  destroy: (e)->
     e?.preventDefault()
-    @confirmDelete @resource, =>
+    @confirmDestroy @resource, =>
       @$el.removeClass('neat-editable').addClass('deleted')
 
       @model.destroy
         wait: true
-        success: => @onDeleteSuccess
+        success: => @onDestroySuccess
         error: _.bind(@onSaveError, @)
       @cancelEdit()
 
-  confirmDelete: (resource, callback)->
+  confirmDestroy: (resource, callback)->
     if confirm("Delete this #{resource}?")
       callback()
 
@@ -130,8 +130,8 @@ class window.Neat.ModelEditor extends Backbone.View
 
   onSaveSuccess: ->
   onSaveError: ->
-  onDeleteSuccess: ->
-  onDeleteError: ->
+  onDestroySuccess: ->
+  onDestroyError: ->
 
 
 
