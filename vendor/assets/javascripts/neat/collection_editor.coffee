@@ -151,7 +151,7 @@ class window.Neat.CollectionEditor extends Backbone.View
 
 
   beforeEdit: (view)->
-    if @viewInEdit
+    if @viewInEdit and @viewInEdit isnt view
       @debug "cancelling edit for ##{$(@viewInEdit.el).attr('id')} (#{@indexOfViewInEdit()})"
       @viewInEdit.cancelEdit()
     @viewInEdit = view
