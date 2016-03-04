@@ -1,6 +1,7 @@
 class window.Neat.ModelEditor extends Backbone.View
   tagName: 'li'
   className: 'neat-row neat-interactive neat-editable'
+  waitOnSave: true
 
   initialize: (options)->
     options = options ? {}
@@ -82,7 +83,7 @@ class window.Neat.ModelEditor extends Backbone.View
       previousAttributes = @model.toJSON()
 
       @model.save attributes,
-        wait: true
+        wait: @waitOnSave
         success: =>
           for attribute, newValue of attributes
             @debug "  . #{attribute} changed from ", previousAttributes[attribute], " to ", @model.get(attribute)
