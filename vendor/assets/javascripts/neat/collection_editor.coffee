@@ -215,6 +215,8 @@ class window.Neat.CollectionEditor extends Backbone.View
     _.indexOf @views, @viewInEdit
 
   edit: (view)->
+    if view instanceof Backbone.Model
+      view = @__findViewForModel(view)
     if view
       @viewInEdit?.save()
       view.edit()
@@ -234,6 +236,10 @@ class window.Neat.CollectionEditor extends Backbone.View
   __remove: ->
     @rerenderPage()
 
+
+
+  __findViewForModel: (model)->
+    _.find @views, (view)-> view.model.cid is model.cid
 
 
   debug: (o...)->
