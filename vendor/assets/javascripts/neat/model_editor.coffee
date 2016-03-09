@@ -94,26 +94,42 @@ class window.Neat.ModelEditor extends Backbone.View
   okToSave: (attributes)->
     true
 
-  attributesFromForm: ($el)->
+  attributesFromForm: ($el) ->
     attrs = {}
     $el.find('input, select, textarea').each ->
-      elem = $(this)
+      elem = $(@)
       name = elem.attr('name')
-      if name
-        elemType = elem.attr('type')
-        value = elem.val()
+      elemType = elem.attr('type')
+      value = elem.val()
+      return true unless name
 
-        if name.substr(-2) == '[]'
-          name = name.substring(0, name.length - 2)
-          attrs[name] = attrs[name] || []
-          attrs[name].push elem.val()
+      # Parse out nested objects as represented in names
+      # person[address][zip]=63303 should be serialized to:
+      # person:
+      #   address:
+      #     zip: 63303
+      parts = _.without(name.split(/\[([^\]]+)\]/), '')
+      name = parts.pop()
+      isArray = false
+      while name is '[]'
+        isArray = true
+        name = parts.pop()
+      context = attrs
+      for part in parts
+        context = context[part] or (context[part] = {})
 
-        else if elemType == 'checkbox' || elemType == 'radio'
-          attrs[name] = '' if typeof(attrs[name]) == 'undefined'
-          attrs[name] = value if elem.prop('checked')
+      if (elemType == 'checkbox' || elemType == 'radio') && !elem.prop('checked')
+        return true
 
-        else
-          attrs[name] = value
+      if isArray
+        # select with multiple=true will return
+        # an array of selected values, so we don't
+        # need to nest that array in another array
+        value = [value] unless _.isArray(value)
+        value = (context[name] || []).concat(value)
+
+      context[name] = value
+      true # Don't break out of the loop
     attrs
 
   destroy: (e)->
