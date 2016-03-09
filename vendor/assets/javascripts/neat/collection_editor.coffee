@@ -22,6 +22,7 @@ class window.Neat.CollectionEditor extends Backbone.View
   useKeyboardToChangeRows: true
   cancelOnEsc: true
   saveOnEnter: true
+  alternateRows: true
 
   initialize: ->
     @keyDownHandlers = {}
@@ -142,7 +143,7 @@ class window.Neat.CollectionEditor extends Backbone.View
       @views.push(view)
 
       $el = $(view.render().el)
-      $el.toggleClass 'alt', !(alt = !alt)
+      $el.toggleClass 'alt', !(alt = !alt) if @alternateRows
       $ul.append $el
     @
 
