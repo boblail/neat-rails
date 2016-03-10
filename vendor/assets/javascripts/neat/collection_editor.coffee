@@ -125,27 +125,34 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   renderPage: ->
     alt = false
-    $ul = $(@el).find("##{@resource}").empty() # e.g. $('#calendars')
+    @$ul = $(@el).find("##{@resource}").empty() # e.g. $('#calendars')
     @views = []
-    self = @
 
     $(@el).find('.extended-pagination').html(@paginator.renderExtendedPagination())
 
     for model in @paginator.getCurrentSet()
-      view = @constructModelView # e.g. window.CalendarView
-        resource: @resource
-        viewPath: @viewPath
-        model: model
-        templateOptions: @templateOptions
-      view.bind 'edit:begin', -> self.beforeEdit.call(self, @)
-      view.bind 'edit:end', -> self.afterEdit.call(self, @)
-
-      @views.push(view)
-
-      $el = $(view.render().el)
+      $el = @appendViewFor(model)
       $el.toggleClass 'alt', !(alt = !alt) if @alternateRows
-      $ul.append $el
     @
+
+  appendViewFor: (model) ->
+    view = @buildViewFor(model)
+    @views.push(view)
+
+    $el = $(view.render().el)
+    @$ul.append $el
+    $el
+
+  buildViewFor: (model) ->
+    self = @
+    view = @constructModelView
+      resource: @resource
+      viewPath: @viewPath
+      model: model
+      templateOptions: @templateOptions
+    view.bind 'edit:begin', -> self.beforeEdit.call(self, @)
+    view.bind 'edit:end', -> self.afterEdit.call(self, @)
+    view
 
   constructModelView: (options) ->
     new @modelView options
