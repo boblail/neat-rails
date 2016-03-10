@@ -22,7 +22,6 @@ class window.Neat.CollectionEditor extends Backbone.View
   useKeyboardToChangeRows: true
   cancelOnEsc: true
   saveOnEnter: true
-  alternateRows: true
 
   initialize: ->
     @keyDownHandlers = {}
@@ -124,15 +123,13 @@ class window.Neat.CollectionEditor extends Backbone.View
     @
 
   renderPage: ->
-    alt = false
-    @$ul = $(@el).find("##{@resource}").empty() # e.g. $('#calendars')
+    @$ul = $(@el).find("##{@resource}").empty()
     @views = []
 
     $(@el).find('.extended-pagination').html(@paginator.renderExtendedPagination())
 
     for model in @paginator.getCurrentSet()
-      $el = @appendViewFor(model)
-      $el.toggleClass 'alt', !(alt = !alt) if @alternateRows
+      @appendViewFor(model)
     @
 
   appendViewFor: (model) ->
