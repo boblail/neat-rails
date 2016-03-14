@@ -155,7 +155,9 @@ class window.Neat.CollectionEditor extends Backbone.View
     view
 
   constructModelView: (options) ->
-    new @modelView options
+    viewClass = @modelView
+    viewClass = viewClass(options.model) if _.isFunction(viewClass) and !(viewClass.prototype instanceof Neat.ModelEditor)
+    new viewClass(options)
 
 
   beforeEdit: (view)->
