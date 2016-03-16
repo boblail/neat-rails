@@ -10,6 +10,7 @@
 //= require ./neat/lib/paginated_list
 //= require ./neat/lib/delayed_action
 //= require ./neat/lib/jquery_extensions
+//= require ./neat/paginated_collection_renderer
 //= require ./neat/collection_editor
 //= require ./neat/model_editor
 
