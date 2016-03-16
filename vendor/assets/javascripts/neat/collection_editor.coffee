@@ -15,8 +15,6 @@ KEYS = {
 #   viewPath - by default this is set to resource
 #
 class window.Neat.CollectionEditor extends Backbone.View
-  sortOrder: 'asc'
-  sortAliases: {}
   templateOptions: {}
   useKeyboardToChangeRows: true
   cancelOnEsc: true
@@ -43,9 +41,6 @@ class window.Neat.CollectionEditor extends Backbone.View
     @rendererOptions.pageSize = @pageSize if @pageSize?
     @_renderer = new @renderer(@, @collection, @rendererOptions)
 
-    # If the view's headers are 'a' tags, this view will try
-    # to sort the collection using the header tags.
-    $(@el).delegate '.header a', 'click', _.bind(@sort, @)
     $(@el).delegate '.editor', 'keydown', _.bind(@onKeyDown, @)
 
     if @cancelOnEsc
@@ -71,8 +66,6 @@ class window.Neat.CollectionEditor extends Backbone.View
     @$ul = $(@el).find("##{@resource}")
 
     @afterRender()
-
-    @updateSortStyle() if @sortedBy
 
     @_renderer.renderTo @$ul
     @
@@ -109,33 +102,6 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   afterEdit: (view)->
     @viewInEdit = null if @viewInEdit == view
-
-
-
-  sort: (e)->
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    sortBy = $(e.target).closest('a').attr('class').substring(@singular.length + 1)
-    @log "sort by #{sortBy} [#{@sortField(sortBy)}]"
-    if @sortedBy == sortBy
-      @sortOrder = if @sortOrder == 'asc' then 'desc' else 'asc'
-    else
-      @removeSortStyle @sortedBy
-      @sortedBy = sortBy
-    @collection.trigger "sort"
-    @updateSortStyle()
-    false
-
-  removeSortStyle: (field)->
-
-  updateSortStyle: ()->
-    @removeSortStyle @sortedBy
-
-  getHeader: (field)->
-    $(@el).find(".header > .#{@singular}-#{field}")
-
-  sortField: (field)->
-    @sortAliases[field] ? field
 
 
 

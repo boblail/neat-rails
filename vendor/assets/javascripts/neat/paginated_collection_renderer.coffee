@@ -18,14 +18,7 @@ class window.Neat.PaginatedCollectionRenderer extends window.Neat.BasicCollectio
 
   _rerenderPage: (page)->
     page = @paginator.getCurrentPage() unless _.isNumber(page)
-    if @view.sortedBy
-      sortField = @view.sortField(@view.sortedBy)
-      items = @collection.sortBy (model)->
-        val = model.get(sortField) || ''
-        if _.isString(val) then val.toLowerCase() else val
-      items.reverse() if @view.sortOrder == 'desc'
-    else
-      items = @collection.toArray()
+    items = @collection.toArray()
     @paginator.init items, page
 
   _renderPage: ->

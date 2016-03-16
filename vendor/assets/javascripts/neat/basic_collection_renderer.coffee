@@ -7,29 +7,6 @@ class window.Neat.BasicCollectionRenderer
     @collection.bind 'remove',  @_modelHasBeenRemovedFromCollection, @
     @views = []
 
-    # We need to rerender the page if a model's attributes
-    # have changed just in case this would affect how the
-    # models are sorted.
-    #
-    # !todo: perhaps we can be smarter here and only listen
-    # for changes to the attribute the view is sorted on.
-    #
-    # We don't want to redraw the page every time a model
-    # has changed. If an old transaction is deleted, a very
-    # large number of more recent transactions' running
-    # balances could be updated very rapidly. Redrawing the
-    # page will slow things down dramatically.
-    #
-    # Instead, redraw the page 500ms after a model has changed.
-    #
-    # This allows us to wait for activity to die down
-    # and to redraw the page when it's more likely the system
-    # has settled into new state.
-    #
-    @delayedRerender = new Lail.DelayedAction(_.bind(@_modelHasBeenChanged, @), delay: 500)
-    @collection.bind 'change', =>
-      @delayedRerender.trigger() if @view.sortedBy
-
   renderTo: (@$ul) ->
     @_render()
 

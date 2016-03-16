@@ -8,7 +8,6 @@
 //= require ./neat/lib/inflect
 //= require ./neat/lib/observer
 //= require ./neat/lib/paginated_list
-//= require ./neat/lib/delayed_action
 //= require ./neat/lib/jquery_extensions
 //= require ./neat/basic_collection_renderer
 //= require ./neat/paginated_collection_renderer
