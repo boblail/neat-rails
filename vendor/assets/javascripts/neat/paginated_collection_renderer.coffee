@@ -1,52 +1,22 @@
-class window.Neat.PaginatedCollectionRenderer
+class window.Neat.PaginatedCollectionRenderer extends window.Neat.BasicCollectionRenderer
 
   constructor: (@view, @collection, @options) ->
-
+    super
     @paginator = new window.Lail.PaginatedList [],
       page_size: if window.Neat.forPrint then Infinity else @options.pageSize
       always_show: false
-    @paginator.onPageChange _.bind(@renderPage, @)
-
-    @collection.bind 'reset',   @__reset, @
-    @collection.bind 'add',     @__added, @
-    @collection.bind 'remove',  @__removed, @
-    @collection.bind 'sort',    @__sorted, @
-
-    # We need to rerender the page if a model's attributes
-    # have changed just in case this would affect how the
-    # models are sorted.
-    #
-    # !todo: perhaps we can be smarter here and only listen
-    # for changes to the attribute the view is sorted on.
-    #
-    # We don't want to redraw the page every time a model
-    # has changed. If an old transaction is deleted, a very
-    # large number of more recent transactions' running
-    # balances could be updated very rapidly. Redrawing the
-    # page will slow things down dramatically.
-    #
-    # Instead, redraw the page 500ms after a model has changed.
-    #
-    # This allows us to wait for activity to die down
-    # and to redraw the page when it's more likely the system
-    # has settled into new state.
-    #
-    @delayedRerender = new Lail.DelayedAction(_.bind(@rerenderPage, @), delay: 500)
-    @collection.bind 'change', =>
-      @delayedRerender.trigger() if @view.sortedBy
-
-    @views = []
+    @paginator.onPageChange _.bind(@_renderPage, @)
 
 
 
-  renderTo: (@$ul) ->
+  _render: ->
     @paginator.renderPaginationIn(@view.$el.find('.pagination'))
-    @repaginate()
+    @_repaginate()
 
-  repaginate: ->
-    @rerenderPage(1)
+  _repaginate: ->
+    @_rerenderPage(1)
 
-  rerenderPage: (page)->
+  _rerenderPage: (page)->
     page = @paginator.getCurrentPage() unless _.isNumber(page)
     if @view.sortedBy
       sortField = @view.sortField(@view.sortedBy)
@@ -58,41 +28,21 @@ class window.Neat.PaginatedCollectionRenderer
       items = @collection.toArray()
     @paginator.init items, page
 
-  renderPage: ->
-    alt = false
-    @$ul.empty() # we're replacing the visible page
-    @views = []
-
+  _renderPage: ->
     @view.$el.find('.extended-pagination').html(@paginator.renderExtendedPagination())
+    @_renderVisibleModels()
 
-    for model in @paginator.getCurrentSet()
-      $el = @appendViewFor(model)
-      $el.toggleClass 'alt', !(alt = !alt) if @view.alternateRows
-    @
+  _visibleModels: ->
+    @paginator.getCurrentSet()
 
-  appendViewFor: (model) ->
-    view = @view.buildViewFor(model)
-    @views.push(view)
+  _collectionHasBeenSorted: ->
+    @_repaginate()
 
-    $el = $(view.render().el)
-    @$ul.append $el
-    $el
+  _modelHasBeenAddedToCollection: ->
+    @_rerenderPage()
 
+  _modelHasBeenRemovedFromCollection: ->
+    @_rerenderPage()
 
-
-  findViewForModel: (model)->
-    _.find @views, (view)-> view.model.cid is model.cid
-
-
-
-  __reset: ->
-    @render()
-
-  __added: ->
-    @rerenderPage()
-
-  __removed: ->
-    @rerenderPage()
-
-  __sorted: ->
-    @repaginate()
+  _modelHasBeenChanged: ->
+    @_rerenderPage()
