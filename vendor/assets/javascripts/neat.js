@@ -9,8 +9,10 @@
 //= require ./neat/lib/observer
 //= require ./neat/lib/paginated_list
 //= require ./neat/lib/jquery_extensions
+//= require ./neat/lib/scroll_handler
 //= require ./neat/renderer/basic
 //= require ./neat/renderer/paginated
+//= require ./neat/renderer/infinite_reveal
 //= require ./neat/collection_editor
 //= require ./neat/model_editor
 
