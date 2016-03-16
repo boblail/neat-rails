@@ -19,9 +19,8 @@ class window.Neat.CollectionEditor extends Backbone.View
   useKeyboardToChangeRows: true
   cancelOnEsc: true
   saveOnEnter: true
-  renderer: Neat.PaginatedCollectionRenderer
-  rendererOptions:
-    pageSize: 30
+  renderer: Neat.BasicCollectionRenderer
+  rendererOptions: {}
 
   initialize: ->
     @keyDownHandlers = {}
