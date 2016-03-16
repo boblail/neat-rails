@@ -8,10 +8,11 @@ class window.Neat.BasicCollectionRenderer
     @views = []
 
   renderTo: (@$ul) ->
+    @views = []
     @_render()
 
   findViewForModel: (model)->
-    _.find @views, (view)-> view.model.cid is model.cid
+    @views[@_indexOfViewForModel(model)]
 
 
 
@@ -21,23 +22,52 @@ class window.Neat.BasicCollectionRenderer
     @_renderVisibleModels()
 
   _renderVisibleModels: ->
-    @$ul.empty()
-    @views = []
+    visibleModels = @_visibleModels()
 
-    for model in @_visibleModels()
-      @_appendViewFor(model)
+    # Remove views that no longer correspond to visible models.
+    viewIndex = 0
+    while viewIndex < @views.length
+      if _.contains(visibleModels, @views[viewIndex].model)
+        viewIndex += 1
+      else
+        @_removeView(viewIndex)
+
+    # Add views for newly-visible models; and coerce views
+    # (and their corresponding DOM elements) to show up in
+    # the same order as the visible models.
+    for model, index in visibleModels
+      viewIndex = @_indexOfViewForModel(model)
+      if viewIndex >= 0
+        @_moveView(viewIndex, index) unless viewIndex is index
+      else
+        @_insertView @view.buildViewFor(model), index
     @
+
+  _insertView: (view, newIndex) ->
+    view.render()
+    $(view.el).insertBeforeChildOrAppendTo @$ul, ".neat-row:eq(#{newIndex})"
+    @views.splice(newIndex, 0, view)
+
+  _moveView: (oldIndex, newIndex) ->
+    $el = $ @views[oldIndex].el
+    $el.detach().insertBeforeChildOrAppendTo @$ul, ".neat-row:eq(#{newIndex})"
+
+    view = @views.splice(oldIndex, 1)[0]
+    @views.splice(newIndex, 0, view)
+
+  _removeView: (oldIndex) ->
+    @views[oldIndex].remove()
+    @views.splice(oldIndex, 1)
+
+
 
   _visibleModels: ->
     @collection.toArray()
 
-  _appendViewFor: (model) ->
-    view = @view.buildViewFor(model)
-    @views.push(view)
+  _indexOfViewForModel: (model)->
+    _.findIndex @views, (view)-> view.model.cid is model.cid
 
-    $el = $(view.render().el)
-    @$ul.append $el
-    $el
+
 
   _collectionHasBeenReset: ->
     @render()

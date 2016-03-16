@@ -1,5 +1,5 @@
 $.fn.extend
-  cssHover: (selector)->
+  cssHover: (selector) ->
     if arguments.length == 0
       @hover(
         -> $(@).addClass('hovered'),
@@ -11,5 +11,13 @@ $.fn.extend
         else
           $(@).removeClass('hovered')
 
-  isIn: (selector)->
+  isIn: (selector) ->
     @is(selector) or (@parents(selector).length > 0)
+
+  insertBeforeChildOrAppendTo: (parent, selector) ->
+    $parent = $ parent
+    $insertionPoint = $parent.children(selector)
+    if $insertionPoint.length > 0
+      $insertionPoint.before @
+    else
+      $parent.append @
