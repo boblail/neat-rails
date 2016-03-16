@@ -1,4 +1,4 @@
-class window.Neat.BasicCollectionRenderer
+class window.Neat.Renderer.Basic
 
   constructor: (@view, @collection, @options) ->
     @collection.bind 'reset',   @_collectionHasBeenReset, @

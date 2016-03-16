@@ -1,4 +1,4 @@
-class window.Neat.PaginatedCollectionRenderer extends window.Neat.BasicCollectionRenderer
+class window.Neat.Renderer.Paginated extends window.Neat.Renderer.Basic
 
   constructor: (@view, @collection, @options) ->
     super

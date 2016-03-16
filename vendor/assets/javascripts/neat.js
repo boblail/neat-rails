@@ -9,12 +9,13 @@
 //= require ./neat/lib/observer
 //= require ./neat/lib/paginated_list
 //= require ./neat/lib/jquery_extensions
-//= require ./neat/basic_collection_renderer
-//= require ./neat/paginated_collection_renderer
+//= require ./neat/renderer/basic
+//= require ./neat/renderer/paginated
 //= require ./neat/collection_editor
 //= require ./neat/model_editor
 
 window.Neat = window.Neat || {}
+window.Neat.Renderer = window.Neat.Renderer || {}
 window.Neat.debug = true;
 window.Neat.logger = {
   log: function() {
