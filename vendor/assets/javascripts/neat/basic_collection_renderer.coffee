@@ -21,13 +21,11 @@ class window.Neat.BasicCollectionRenderer
     @_renderVisibleModels()
 
   _renderVisibleModels: ->
-    alt = false
     @$ul.empty()
     @views = []
 
     for model in @_visibleModels()
-      $el = @_appendViewFor(model)
-      $el.toggleClass 'alt', !(alt = !alt) if @view.alternateRows
+      @_appendViewFor(model)
     @
 
   _visibleModels: ->
