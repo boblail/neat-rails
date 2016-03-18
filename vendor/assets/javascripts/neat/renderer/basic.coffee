@@ -70,16 +70,16 @@ class window.Neat.Renderer.Basic
 
 
   _collectionHasBeenReset: ->
-    @render()
+    @_render()
 
   _collectionHasBeenSorted: ->
-    @render()
+    @_render()
 
   _modelHasBeenAddedToCollection: ->
-    @render()
+    @_render()
 
   _modelHasBeenRemovedFromCollection: ->
-    @render()
+    @_render()
 
   _modelHasBeenChanged: ->
-    @render()
+    @_render()
