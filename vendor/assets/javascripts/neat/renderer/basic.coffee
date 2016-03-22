@@ -6,6 +6,7 @@ class window.Neat.Renderer.Basic
     @collection.bind 'add',     @_modelHasBeenAddedToCollection, @
     @collection.bind 'remove',  @_modelHasBeenRemovedFromCollection, @
     @views = []
+    @observer = new Observer()
 
   renderTo: (@$ul) ->
     @views = []
@@ -14,7 +15,8 @@ class window.Neat.Renderer.Basic
   findViewForModel: (model)->
     @views[@_indexOfViewForModel(model)]
 
-
+  afterRender: (callback) ->
+    @observer.observe "after_render", callback
 
   _render: ->
     # Doesn't need to render anything else like pagination controls on the view
@@ -41,6 +43,8 @@ class window.Neat.Renderer.Basic
         @_moveView(viewIndex, index) unless viewIndex is index
       else
         @_insertView @view.buildViewFor(model), index
+
+    @observer.fire "after_render"
     @
 
   _insertView: (view, newIndex) ->

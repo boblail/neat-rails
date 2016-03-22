@@ -42,6 +42,8 @@ class window.Neat.CollectionEditor extends Backbone.View
     rendererKlass = Neat.Renderer[rendererKlass] if _.isString(rendererKlass)
     @_renderer = new rendererKlass(@, @collection, @rendererOptions)
 
+    @_renderer.afterRender _.bind(@afterRender, @)
+
     $(@el).delegate '.editor', 'keydown', _.bind(@onKeyDown, @)
 
     if @cancelOnEsc
@@ -65,8 +67,6 @@ class window.Neat.CollectionEditor extends Backbone.View
     $el.html @template(@context())
     $el.cssHover '.neat-row.neat-interactive'
     @$ul = $(@el).find("##{@resource}")
-
-    @afterRender()
 
     @_renderer.renderTo @$ul
     @
