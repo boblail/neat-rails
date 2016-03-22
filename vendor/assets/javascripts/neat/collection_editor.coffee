@@ -120,16 +120,17 @@ class window.Neat.CollectionEditor extends Backbone.View
     # i.e. return true if target is in a dropdown control like Chosen
     false
 
-
+  views: ->
+    @_renderer.views
 
   nextView: ->
-    @_renderer.views[@indexOfViewInEdit() + 1]
+    @views()[@indexOfViewInEdit() + 1]
 
   prevView: ->
-    @_renderer.views[@indexOfViewInEdit() - 1]
+    @views()[@indexOfViewInEdit() - 1]
 
   indexOfViewInEdit: ->
-    _.indexOf @_renderer.views, @viewInEdit
+    _.indexOf @views(), @viewInEdit
 
   edit: (view)->
     if view instanceof Backbone.Model
