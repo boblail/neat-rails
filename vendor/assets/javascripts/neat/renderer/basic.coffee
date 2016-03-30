@@ -5,6 +5,7 @@ class window.Neat.Renderer.Basic
     @collection.bind 'sort',    @_collectionHasBeenSorted, @
     @collection.bind 'add',     @_modelHasBeenAddedToCollection, @
     @collection.bind 'remove',  @_modelHasBeenRemovedFromCollection, @
+    @collection.bind 'change',  @_modelHasBeenChanged, @
     @views = []
     @observer = new Observer()
 
@@ -85,5 +86,5 @@ class window.Neat.Renderer.Basic
   _modelHasBeenRemovedFromCollection: ->
     @_render()
 
-  _modelHasBeenChanged: ->
-    @_render()
+  _modelHasBeenChanged: (model) ->
+    # do nothing
