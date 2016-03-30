@@ -52,6 +52,7 @@ class window.Neat.Renderer.Basic
     view.render()
     $(view.el).insertBeforeChildOrAppendTo @$ul, ".neat-row:eq(#{newIndex})"
     @views.splice(newIndex, 0, view)
+    @_viewAddedAt(view, newIndex)
 
   _moveView: (oldIndex, newIndex) ->
     $el = $ @views[oldIndex].el
@@ -59,10 +60,21 @@ class window.Neat.Renderer.Basic
 
     view = @views.splice(oldIndex, 1)[0]
     @views.splice(newIndex, 0, view)
+    @_viewRemovedAt(view, oldIndex)
+    @_viewAddedAt(view, newIndex)
 
   _removeView: (oldIndex) ->
     @views[oldIndex].remove()
-    @views.splice(oldIndex, 1)
+    view = @views.splice(oldIndex, 1)[0]
+    @_viewRemovedAt(view, oldIndex)
+
+
+
+  _viewAddedAt: (view, index) ->
+    # do nothing
+
+  _viewRemovedAt: (view, index) ->
+    # do nothing
 
 
 
