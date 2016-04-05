@@ -140,8 +140,8 @@ class window.Neat.ModelEditor extends Backbone.View
 
       @model.destroy
         wait: true
-        success: => @onDestroySuccess
-        error: _.bind(@onSaveError, @)
+        success: _.bind(@onDestroySuccess, @)
+        error: _.bind(@onDestroyError, @)
       @endEdit()
 
   confirmDestroy: (resource, callback)->

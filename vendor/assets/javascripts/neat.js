@@ -8,12 +8,16 @@
 //= require ./neat/lib/inflect
 //= require ./neat/lib/observer
 //= require ./neat/lib/paginated_list
-//= require ./neat/lib/delayed_action
 //= require ./neat/lib/jquery_extensions
+//= require ./neat/lib/scroll_handler
+//= require ./neat/renderer/basic
+//= require ./neat/renderer/paginated
+//= require ./neat/renderer/infinite_reveal
 //= require ./neat/collection_editor
 //= require ./neat/model_editor
 
 window.Neat = window.Neat || {}
+window.Neat.Renderer = window.Neat.Renderer || {}
 window.Neat.debug = true;
 window.Neat.logger = {
   log: function() {

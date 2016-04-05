@@ -15,14 +15,12 @@ KEYS = {
 #   viewPath - by default this is set to resource
 #
 class window.Neat.CollectionEditor extends Backbone.View
-  sortOrder: 'asc'
-  sortAliases: {}
   templateOptions: {}
-  pageSize: 30
   useKeyboardToChangeRows: true
   cancelOnEsc: true
   saveOnEnter: true
-  alternateRows: true
+  renderer: "Basic"
+  rendererOptions: {}
 
   initialize: ->
     @keyDownHandlers = {}
@@ -37,41 +35,15 @@ class window.Neat.CollectionEditor extends Backbone.View
     @debug "looking for template at #{"#{@viewPath}/index"}"
     @template = @template ? Neat.template["#{@viewPath}/index"]
 
-    @paginator = new window.Lail.PaginatedList [],
-      page_size: if window.Neat.forPrint then Infinity else @pageSize
-      always_show: false
-    @paginator.onPageChange _.bind(@renderPage, @)
+    # For backwards-compatibility
+    @rendererOptions.pageSize = @pageSize if @pageSize?
 
-    @collection.bind 'reset',   @__reset, @
-    @collection.bind 'add',     @__add, @
-    @collection.bind 'remove',  @__remove, @
+    rendererKlass = @renderer
+    rendererKlass = Neat.Renderer[rendererKlass] if _.isString(rendererKlass)
+    @_renderer = new rendererKlass(@, @collection, @rendererOptions)
 
-    # We need to rerender the page if a model's attributes
-    # have changed just in case this would affect how the
-    # models are sorted.
-    #
-    # !todo: perhaps we can be smarter here and only listen
-    # for changes to the attribute the view is sorted on.
-    #
-    # We don't want to redraw the page every time a model
-    # has changed. If an old transaction is deleted, a very
-    # large number of more recent transactions' running
-    # balances could be updated very rapidly. Redrawing the
-    # page will slow things down dramatically.
-    #
-    # Instead, redraw the page 500ms after a model has changed.
-    #
-    # This allows us to wait for activity to die down
-    # and to redraw the page when it's more likely the system
-    # has settled into new state.
-    #
-    @delayedRerender = new Lail.DelayedAction(_.bind(@rerenderPage, @), delay: 500)
-    @collection.bind 'change', =>
-      @delayedRerender.trigger() if @sortedBy
+    @_renderer.afterRender _.bind(@afterRender, @)
 
-    # If the view's headers are 'a' tags, this view will try
-    # to sort the collection using the header tags.
-    $(@el).delegate '.header a', 'click', _.bind(@sort, @)
     $(@el).delegate '.editor', 'keydown', _.bind(@onKeyDown, @)
 
     if @cancelOnEsc
@@ -84,37 +56,19 @@ class window.Neat.CollectionEditor extends Backbone.View
       @keyDownHandlers['UP']     = -> @edit @prevView()
       @keyDownHandlers['DOWN']   = -> @edit @nextView()
 
-    @views = []
     @viewInEdit = null
     @templateOptions = {}
 
-  repaginate: ->
-    @rerenderPage(1)
 
-  rerenderPage: (page)->
-    page = @paginator.getCurrentPage() unless _.isNumber(page)
-    if @sortedBy
-      sortField = @sortField(@sortedBy)
-      items = @collection.sortBy (model)->
-        val = model.get(sortField) || ''
-        if _.isString(val) then val.toLowerCase() else val
-      items.reverse() if @sortOrder == 'desc'
-    else
-      items = @collection.toArray()
-    @paginator.init items, page
 
 
   render: ->
     $el = $(@el)
     $el.html @template(@context())
     $el.cssHover '.neat-row.neat-interactive'
+    @$ul = $(@el).find("##{@resource}")
 
-    @afterRender()
-
-    @updateSortStyle() if @sortedBy
-
-    @paginator.renderPaginationIn($el.find('.pagination'))
-    @repaginate()
+    @_renderer.renderTo @$ul
     @
 
   context: ->
@@ -122,26 +76,6 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   afterRender: ->
     @
-
-  renderPage: ->
-    alt = false
-    @$ul = $(@el).find("##{@resource}").empty() # e.g. $('#calendars')
-    @views = []
-
-    $(@el).find('.extended-pagination').html(@paginator.renderExtendedPagination())
-
-    for model in @paginator.getCurrentSet()
-      $el = @appendViewFor(model)
-      $el.toggleClass 'alt', !(alt = !alt) if @alternateRows
-    @
-
-  appendViewFor: (model) ->
-    view = @buildViewFor(model)
-    @views.push(view)
-
-    $el = $(view.render().el)
-    @$ul.append $el
-    $el
 
   buildViewFor: (model) ->
     self = @
@@ -155,7 +89,9 @@ class window.Neat.CollectionEditor extends Backbone.View
     view
 
   constructModelView: (options) ->
-    new @modelView options
+    viewClass = @modelView
+    viewClass = viewClass(options.model) if _.isFunction(viewClass) and !(viewClass.prototype instanceof Neat.ModelEditor)
+    new viewClass(options)
 
 
   beforeEdit: (view)->
@@ -167,33 +103,6 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   afterEdit: (view)->
     @viewInEdit = null if @viewInEdit == view
-
-
-
-  sort: (e)->
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    sortBy = $(e.target).closest('a').attr('class').substring(@singular.length + 1)
-    @log "sort by #{sortBy} [#{@sortField(sortBy)}]"
-    if @sortedBy == sortBy
-      @sortOrder = if @sortOrder == 'asc' then 'desc' else 'asc'
-    else
-      @removeSortStyle @sortedBy
-      @sortedBy = sortBy
-    @repaginate()
-    @updateSortStyle()
-    false
-
-  removeSortStyle: (field)->
-
-  updateSortStyle: ()->
-    @removeSortStyle @sortedBy
-
-  getHeader: (field)->
-    $(@el).find(".header > .#{@singular}-#{field}")
-
-  sortField: (field)->
-    @sortAliases[field] ? field
 
 
 
@@ -211,20 +120,21 @@ class window.Neat.CollectionEditor extends Backbone.View
     # i.e. return true if target is in a dropdown control like Chosen
     false
 
-
+  views: ->
+    @_renderer.views
 
   nextView: ->
-    @views[@indexOfViewInEdit() + 1]
+    @views()[@indexOfViewInEdit() + 1]
 
   prevView: ->
-    @views[@indexOfViewInEdit() - 1]
+    @views()[@indexOfViewInEdit() - 1]
 
   indexOfViewInEdit: ->
-    _.indexOf @views, @viewInEdit
+    _.indexOf @views(), @viewInEdit
 
   edit: (view)->
     if view instanceof Backbone.Model
-      view = @__findViewForModel(view)
+      view = @_renderer.findViewForModel(view)
     if view
       @viewInEdit?.save()
       view.edit()
@@ -232,22 +142,6 @@ class window.Neat.CollectionEditor extends Backbone.View
 
   cancelEdit: ->
     @viewInEdit?.cancelEdit()
-
-
-
-  __reset: ->
-    @render()
-
-  __add: ->
-    @rerenderPage()
-
-  __remove: ->
-    @rerenderPage()
-
-
-
-  __findViewForModel: (model)->
-    _.find @views, (view)-> view.model.cid is model.cid
 
 
   debug: (o...)->
