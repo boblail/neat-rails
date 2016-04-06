@@ -31,8 +31,7 @@ class window.Neat.ModelEditor extends Backbone.View
       @edit() if @canEdit() and !$(e.target).isIn('input, button, a, label')
 
   render: ->
-    json = _.extend(@model.toJSON(), {options: @templateOptions})
-    @$el.html @template()(json)
+    @$el.html @template()(@context())
     @$el.attr('id', "#{@resource}_#{@model.get('id')}") # e.g. "calendar_5"
 
     @afterRender()
@@ -94,6 +93,9 @@ class window.Neat.ModelEditor extends Backbone.View
 
   okToSave: (attributes)->
     true
+
+  context: ->
+    _.extend(@model.toJSON(), {options: @templateOptions})
 
   attributesFromForm: ($el) ->
     attrs = {}
