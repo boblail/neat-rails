@@ -76,6 +76,10 @@ class window.Neat.ModelEditor extends Backbone.View
     @debug 'saving: ', newAttributes
     attributes =  @model.changedAttributes(newAttributes)
 
+    # If we're not waiting, the model is updated, so if there's an error,
+    # you potentially still need to re-submit the model for save.
+    attributes ||= {} unless @waitOnSave
+
     return unless @okToSave(attributes)
 
     if attributes
