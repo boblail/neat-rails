@@ -28,7 +28,7 @@ class window.Neat.ModelEditor extends Backbone.View
     # Begin editing when this resource is clicked
     # unless the user clicked a link or button.
     @$el.click (e)=>
-      @edit() if @canEdit() and !$(e.target).isIn('input, button, a, label')
+      @onClick(e)
 
   render: ->
     @$el.html @template()(@context())
@@ -43,6 +43,7 @@ class window.Neat.ModelEditor extends Backbone.View
   inEdit: -> @$el.hasClass('editor')
   canEdit: -> @$el.hasClass('neat-editable') and !@inEdit()
   template: -> if @inEdit() then @editTemplate else @showTemplate
+  onClick: (e)-> @edit() if @canEdit() and !$(e.target).isIn('input, button, a, label')
 
   cancelEdit: (e)->
     e?.preventDefault()
