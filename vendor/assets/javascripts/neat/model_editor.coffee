@@ -116,7 +116,7 @@ class window.Neat.ModelEditor extends Backbone.View
       # person:
       #   address:
       #     zip: 63303
-      parts = _.without(name.split(/\[([^\]]+)\]/), '')
+      parts = _.without(name.split(/\[([^\]]*)\]/), '')
       name = parts.pop()
       isArray = false
       while name is '[]'
