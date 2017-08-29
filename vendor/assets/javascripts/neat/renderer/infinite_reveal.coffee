@@ -21,6 +21,7 @@ class window.Neat.Renderer.InfiniteReveal extends window.Neat.Renderer.Basic
     Neat.logger.log "[Neat.Renderer.InfiniteReveal] loading..."
     @_setMaxItems @maxItems + @pageSize
     @_renderVisibleModels()
+    @_thereIsMore()
 
   _thereIsMore: ->
     @collection.length > @maxItems
