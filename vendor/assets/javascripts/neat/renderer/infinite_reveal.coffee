@@ -2,7 +2,7 @@ class window.Neat.Renderer.InfiniteReveal extends window.Neat.Renderer.Basic
 
   constructor: (@view, @collection, @options) ->
     super
-    @scrollHandler = new Neat.ScrollHandler()
+    @scrollHandler = new Neat.ScrollHandler(@options)
     @scrollHandler.on "scroll", _.bind(@_windowHasBeenScrolled, @)
 
     @sensitivity = @options.sensitivity ? 5
