@@ -13,8 +13,8 @@ class window.Neat.ModelEditor extends Backbone.View
 
     # Renders the 'show' template normally,
     # renders 'edit' when in edit mode.
-    @showTemplate = Neat.template["#{@viewPath}/show"]
-    @editTemplate = Neat.template["#{@viewPath}/edit"]
+    @showTemplate = @showTemplate ? Neat.template["#{@viewPath}/show"]
+    @editTemplate = @editTemplate ? Neat.template["#{@viewPath}/edit"]
 
     # Wire up events.
     # Don't use Backbone's events hash because if subclasses
